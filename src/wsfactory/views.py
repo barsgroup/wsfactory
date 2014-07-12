@@ -29,7 +29,9 @@ def track_config(fn):
                 "Not configured yet. Load configuration %s" % config_path)
             Settings.load(config_path)
         cache = get_cache("wsfactory")
-        if Settings.hash() != cache.get(Settings.CACHE_KEY):
+        if getattr(
+            settings, "WSFACTORY_DEBUG"
+        ) and Settings.hash() != cache.get(Settings.CACHE_KEY):
             logger.info("Configuration file was changed. Reloading ...")
             Settings.reload()
 
@@ -49,6 +51,11 @@ def api_list(request):
 
 @track_config
 def handle_api_call(request, service):
+    handler = Settings.get_api_handler() or api_handler
+    return handler(request, service)
+
+
+def api_handler(request, service):
     service_handler = Settings.get_service_handler(service)
     if service_handler:
         logger.debug("Hitting service %s" % service)
@@ -57,4 +64,3 @@ def handle_api_call(request, service):
         msg = "Service %s not found" % service
         logger.info(msg)
         raise Http404(msg)
-
