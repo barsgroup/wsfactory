@@ -93,7 +93,8 @@
     <xs:complexType name="SecurityType">
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="pem_file_name" type="xs:string" use="required"/>
+        <xs:attribute name="certificate" type="xs:string" use="required"/>
+        <xs:attribute name="private_key" type="xs:string" use="required"/>
         <xs:attribute name="private_key_pass" type="xs:string" use="required"/>
     </xs:complexType>
 

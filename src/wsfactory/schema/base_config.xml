@@ -1,23 +1,38 @@
 <WSConfig xmlns="http://bars-open.ru/schema/wsfactory">
+  <System>
+    <!-- Раскомментировать для использования модуля spyne_smev -->
+    <!--<Param key="DjangoApplication" valueType="unicode">spyne_smev.server.django.DjangoApplication</Param>-->
+
+    <!-- Раскомментировать для использования m3_wsfactory -->
+    <!--<Param key="MainView" valueType="unicode">m3_wsfactory.views.handle_rpc_call</Param>-->
+  </System>
   <Protocols>
+    <!-- Протоколы -->
     <Protocol code="soap11" direction="BOTH" module="spyne.protocol.soap.soap11.Soap11" name="SOAP 1.1"/>
     <Protocol code="json" direction="BOTH" module="spyne.protocol.json.JsonDocument" name="JSON Protocol"/>
     <Protocol code="http-rpc" direction="IN" module="spyne.protocol.http.HttpRpc" name="HTTP RPC"/>
-    <Protocol code="soap11wsse" direction="BOTH" module="wsfactory.smev.Soap11WSSE" name="SOAP 1.1 WSSE"/>
-    <Protocol code="smev256" direction="BOTH" module="wsfactory.smev.Smev256" name="СМЭВ 2.5.6"/>
+
+    <!-- установите модуль spyne-smev и раскомментируйте следующие строки, чтобы добавить поддежку протоколв СМЭВ -->
+    <!--<Protocol code="soap11wsse" direction="BOTH" module="spyne_smev.wsse.Soap11WSSE" name="SOAP 1.1 WSSE"/>-->
+    <!--<Protocol code="smev256" direction="BOTH" module="spyne_smev.smev256.Smev256" name="СМЭВ 2.5.6"/>-->
+
   </Protocols>
   <ApiRegistry>
+    <!-- API-методы -->
     <Api code="Code" module="some.module.ApiFunction" name="Do some action"/>
   </ApiRegistry>
   <Services>
+    <!-- Сервисы, они же услуги - наботы методов-API -->
     <Service code="Service" name="Sample service">
       <Api code="Code"/>
     </Service>
   </Services>
   <SecurityProfile>
-    <Security code="security" name="Default security profile" pem_file_name="path_to_pem_file" private_key_pass="pem_file_password"/>
+    <!-- Профили безопасности. Для использования необходимо установить модуль spyne_smev -->
+    <Security code="security" name="Default security profile" certificate="path_to_certificate_file" private_key="path_to_pkey_file" private_key_pass="pkey_password"/>
   </SecurityProfile>
   <Applications>
+    <!-- Реестр веб-сервисов (Соответствия протоколов-сервисов) -->
     <Application name="SampleApp" service="Service">
       <InProtocol code="soap11"/>
       <OutProtocol code="soap11"/>

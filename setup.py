@@ -19,5 +19,5 @@ setup(
     description=read_file("DESCRIPTION"),
     author='Timur Salyakhutdinov',
     author_email='t.salyakhutdinov@gmail.com',
-    requires=['lxml', 'spyne'],
+    requires=['lxml', 'spyne', 'django==1.4'],
 )
