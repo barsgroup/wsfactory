@@ -89,8 +89,7 @@ class Settings(object):
 
         if not os.path.exists(config_path):
             raise ImproperlyConfigured(
-                "Configuration file `%s` does not exist!"
-                % config_path)
+                "Configuration file `%s` does not exist!" % config_path)
 
         document_tree = _helpers.load_xml(config_path)
         cls.validate(document_tree)
@@ -111,17 +110,15 @@ class Settings(object):
     @classmethod
     def dump(cls, config_path):
         if not cls.configured():
-            raise ImproperlyConfigured(
-                "Configuration does not loaded yet")
+            raise ImproperlyConfigured("Configuration does not loaded yet")
         self = cls()
         cls.validate(self._document)
 
         logger.debug("Dump configutation file %s" % config_path)
         if not os.access(os.path.exists(
-                config_path) and config_path or os.path.dirname(
-                    config_path), os.W_OK):
-            raise ImproperlyConfigured(
-                "Permission denied `%s`" % config_path)
+            config_path) and config_path or os.path.dirname(
+                config_path), os.W_OK):
+            raise ImproperlyConfigured("Permission denied `%s`" % config_path)
         # Записываем результат в файл
         with open(config_path, "w") as fd:
             fd.write(etree.tostring(
@@ -246,3 +243,9 @@ class Settings(object):
         if api_handler_module:
             self._api_handler = _helpers.load(api_handler_module)
         return self._api_handler
+
+    @classmethod
+    def get_element_root(cls, registry):
+        self = cls()
+        self._document.find(".//{{{0}}}{1}".format(
+            Settings.NAMESPACE, registry))
