@@ -1,12 +1,8 @@
-<WSConfig xmlns="http://bars-open.ru/schema/wsfactory">
-  <System>
-    <!-- Раскомментировать для использования модуля spyne_smev -->
-    <Param key="Application" valueType="unicode">spyne_smev.application.Application</Param>
-    <Param key="DjangoApplication" valueType="unicode">spyne_smev.server.django.DjangoApplication</Param>
-
-    <!-- Раскомментировать для использования m3_wsfactory -->
-    <Param key="ApiHandler" valueType="unicode">m3_wsfactory.views.api_handler</Param>
-  </System>
+<WSConfig xmlns="http://bars-open.ru/schema/wsfactory"
+    ApplicationClass="spyne.application.Application"
+    WsgiClass="spyne.server.django.DjangoApplication"
+    ServiceClass="spyne.service.ServiceBase"
+    ApiHandler="wsfactory.views.api_handler">
   <Protocols>
     <!-- Протоколы -->
     <Protocol code="soap11" direction="BOTH" module="spyne.protocol.soap.soap11.Soap11" name="SOAP 1.1"/>

@@ -30,7 +30,7 @@ def track_config(fn):
             Settings.load(config_path)
         cache = get_cache("wsfactory")
         if getattr(
-            settings, "WSFACTORY_DEBUG"
+            settings, "WSFACTORY_DEBUG", None
         ) and Settings.hash() != cache.get(Settings.CACHE_KEY):
             logger.info("Configuration file was changed. Reloading ...")
             Settings.reload()
@@ -51,8 +51,8 @@ def api_list(request):
 
 @track_config
 def handle_api_call(request, service):
-    handler = Settings.get_api_handler() or api_handler
-    return handler(request, service)
+    conf = Settings()
+    return conf.ApiHandler(request, service)
 
 
 def api_handler(request, service):

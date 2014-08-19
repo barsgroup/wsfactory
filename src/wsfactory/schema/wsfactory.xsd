@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema targetNamespace="http://bars-open.ru/schema/wsfactory"
            xmlns="http://bars-open.ru/schema/wsfactory"
+           xmlns:wsf="http://bars-open.ru/schema/wsfactory"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified">
   <xs:element name="WSConfig">
@@ -64,7 +65,60 @@
         </xs:element>
 
       </xs:sequence>
+
+      <!-- system-wide settings -->
+      <xs:attribute name="ApplicationClass" type="xs:string" use="optional" default="spyne.application.Application"/>
+      <xs:attribute name="WsgiClass" type="xs:string" use="optional" default="spyne.server.django.DjangoApplication"/>
+      <xs:attribute name="ServiceClass" type="xs:string" use="optional" default="spyne.service.ServiceBase"/>
+      <xs:attribute name="ApiHandler" type="xs:string" use="optional" default="wsfactory.views.api_handler"/>
     </xs:complexType>
+
+    <!-- keys -->
+    <xs:key name="ProtocolKey">
+      <xs:selector xpath="wsf:Protocols/wsf:Protocol"/>
+      <xs:field xpath="@code"/>
+    </xs:key>
+    <xs:keyref name="ProtocolKeyRef" refer="ProtocolKey">
+      <xs:selector xpath="wsf:Applications/wsf:Application/wsf:InProtocol|wsf:Applications/wsf:Application/wsf:OutProtocol"/>
+      <xs:field xpath="@code"/>
+    </xs:keyref>
+
+    <xs:key name="ApiKey">
+      <xs:selector xpath="wsf:ApiRegistry/wsf:Api"/>
+      <xs:field xpath="@code"/>
+    </xs:key>
+    <xs:keyref name="ApiKeyRef" refer="ApiKey">
+      <xs:selector xpath="wsf:Services/wsf:Service/wsf:Api"/>
+      <xs:field xpath="@code"/>
+    </xs:keyref>
+
+    <xs:key name="ServiceKey">
+      <xs:selector xpath="wsf:Services/wsf:Service"/>
+      <xs:field xpath="@code"/>
+    </xs:key>
+    <xs:keyref name="ServiceKeyRef" refer="ServiceKey">
+      <xs:selector xpath="wsf:Applications/wsf:Application"/>
+      <xs:field xpath="@service"/>
+    </xs:keyref>
+
+    <xs:key name="SecurityModuleKey">
+      <xs:selector xpath="wsf:SecurityProfile/wsf:Modules/wsf:Module"/>
+      <xs:field xpath="@code"/>
+    </xs:key>
+    <xs:keyref name="SecurityModuleKeyRef" refer="SecurityModuleKey">
+      <xs:selector xpath="wsf:SecurityProfile/wsf:Security"/>
+      <xs:field xpath="@module"/>
+    </xs:keyref>
+
+    <xs:key name="SecurityKey">
+      <xs:selector xpath="wsf:SecurityProfile/wsf:Security"/>
+      <xs:field xpath="@code"/>
+    </xs:key>
+    <xs:keyref name="SecurityKeyRef" refer="SecurityKey">
+      <xs:selector xpath="wsf:Applications/wsf:Application/wsf:InProtocol|wsf:Applications/wsf:Application/wsf:OutProtocol"/>
+      <xs:field xpath="@security"/>
+    </xs:keyref>
+
   </xs:element>
 
   <!--  Types-->
@@ -166,4 +220,5 @@
                   minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
+
 </xs:schema>

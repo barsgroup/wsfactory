@@ -133,94 +133,116 @@ class Settings(object):
         proto_params.update(params)
         if security:
             security_el = self._document.SecurityProfile.find(
-                '*[@code="{0}"'.format(security))
+                '*[@code="{0}"]'.format(security))
             security_params = parse_params(security_el.getchildren())
             security_cls = _helpers.load(
-                self._document.SecurityProfile.Modules.find(
-                    '*[@code="{0}"'.format(security_el["module"])))
+                self._document.SecurityProfile.Modules.xpath(
+                    '*[@code="{0}"]/@path'.format(
+                        security_el.attrib["module"]))[0])
             proto_params["wsse_security"] = security_cls(**security_params)
-        proto_cls = _helpers.load(proto_el["module"])
+        proto_cls = _helpers.load(proto_el.attrib["module"])
         return proto_cls(**proto_params)
 
     def _create_app(self, app_name):
         app_el = self._document.Applications.find(
-            '*[@service="{0}"]'.format(app_name))
-        service_name = app_el["service"]
+            '*[@name="{0}"]'.format(app_name))
+        service_name = app_el.attrib["service"]
         service_el = self._document.Services.find(
             '*[@code="{0}"]'.format(service_name))
-        api = map(
-            lambda api_code: (api_code, _helpers.load(
-                self._document.ApiRegistry.find(
-                    '*[@code="{0}"]'.format(api_code)))),
-            service_el.xpath["*/@code"])
-        service = _helpers.create_service(service_name, api)
+        api = dict(
+            (api_code, _helpers.load(
+                self._document.ApiRegistry.xpath(
+                    '*[@code="{0}"]/@module'.format(api_code))[0]))
+            for api_code in service_el.xpath("*/@code"))
+        service = type(str(service_name), (self.ServiceBase,), dict(api))
 
         in_protocol, out_protocol = self._create_app_protocols(app_el)
 
         app = _helpers.create_application(
-            self._get_app_cls(),
-            self._get_django_cls(),
+            self.Application,
+            self.WsgiApplication,
             app_name, app_el.get("tns", self.DEFAULT_TNS),
             service, in_protocol, out_protocol)
         self._app_cache[app_name] = app
         return app
 
     def _create_app_protocols(self, app_el):
-
-        in_proto_params = dict(app_el.InProtocol.iteritems())
+        in_proto_params = dict(app_el.InProtocol.items())
         in_proto_params["params"] = parse_params(
             app_el.InProtocol.getchildren())
-        out_proto_params = dict(app_el.OutProtocol.iteritems())
+        out_proto_params = dict(app_el.OutProtocol.items())
         out_proto_params["params"] = parse_params(
             app_el.OutProtocol.getchildren())
 
         return (
             self._create_protocol(**in_proto_params),
             self._create_protocol(**out_proto_params))
-    
-    def _get_app_cls(self):
-        if self._app_cls:
-            return self._app_cls
 
-        app_cls_path = self._document.System.xpath(
-            '*[@key="Application"]/text()')
+    @_helpers.cached_to("__ApplicationClass")
+    def __get_app_class(self):
+
+        app_cls_path = self._document.attrib["ApplicationClass"]
 
         from spyne.application import Application
-        if app_cls_path:
-            self._app_cls = _helpers.load(app_cls_path[0])
-            if not issubclass(self._app_cls, Application):
-                raise ImproperlyConfigured(
-                    "{0} is not subclass of spyne Application".format(
-                        self._app_cls.__name__))
-        else:
-            self._app_cls = Application
-        return self._app_cls
+        app_cls = _helpers.load(app_cls_path)
+        if not issubclass(app_cls, Application):
+            raise ImproperlyConfigured(
+                "{0} is not subclass of spyne Application".format(
+                    app_cls.__name__))
+        return app_cls
 
-    def _get_django_cls(self):
-        if self._django_cls:
-            return self._django_cls
+    Application = property(__get_app_class)
 
-        django_cls_path = self._document.System.xpath(
-            '*[@key="DjangoApplication"]/text()')
+    @_helpers.cached_to("__WsgiClass")
+    def __get_wsgi_class(self):
 
+        wsgi_cls_path = self._document.attrib["WsgiClass"]
         from spyne.server.django import DjangoApplication
-        if django_cls_path:
-            self._django_cls = _helpers.load(django_cls_path[0])
-            if not issubclass(self._django_cls, DjangoApplication):
-                raise ImproperlyConfigured(
-                    "{0} is not subclass of spyne DjangoApplication".format(
-                        self._django_cls.__name__))
-        else:
-            self._app_cls = DjangoApplication
-        return self._app_cls
+        wsgi_app_cls = _helpers.load(wsgi_cls_path)
+        if not issubclass(wsgi_app_cls, DjangoApplication):
+            raise ImproperlyConfigured(
+                "{0} is not subclass of spyne DjangoApplication".format(
+                    wsgi_app_cls.__name__))
+        return wsgi_app_cls
+
+    WsgiApplication = property(__get_wsgi_class)
+
+    @_helpers.cached_to("__ServiceClass")
+    def __get_service_class(self):
+
+        service_cls_path = self._document.attrib["ServiceClass"]
+        from spyne.service import ServiceBase
+        service_cls = _helpers.load(service_cls_path)
+        if not issubclass(service_cls, ServiceBase):
+            raise ImproperlyConfigured(
+                "{0} is not subclass of spyne ServiceBase".format(
+                    service_cls.__name__))
+        return service_cls
+
+    ServiceBase = property(__get_service_class)
+
+    @_helpers.cached_to("__ApiHandler")
+    def __get_api_handler(self):
+        service_handler_path = self._document.attrib["ApiHandler"]
+        service_handler = _helpers.load(service_handler_path)
+        if not callable(service_handler):
+            raise ImproperlyConfigured(
+                "`{0}` is not callable".format(service_handler_path))
+        return service_handler
+
+    ApiHandler = property(__get_api_handler)
 
     @classmethod
     def get_service_handler(cls, service_name):
         self = cls()
-        if not service_name in self._applications.iterkeys():
+        if not service_name in self._document.Applications.xpath("*/@name"):
             return None
-        return self._app_cache.setdefault(
-            service_name, self._create_app(service_name))
+        if service_name in self._app_cache:
+            return self._app_cache.get(service_name)
+        else:
+            app = self._create_app(service_name)
+            self._app_cache[service_name] = app
+            return app
 
     @classmethod
     def configured(cls):
@@ -237,15 +259,7 @@ class Settings(object):
         return self._hash
 
     @classmethod
-    def get_api_handler(cls):
-        self = cls()
-        api_handler_module = getattr(self, "ApiHandler", None)
-        if api_handler_module:
-            self._api_handler = _helpers.load(api_handler_module)
-        return self._api_handler
-
-    @classmethod
     def get_element_root(cls, registry):
         self = cls()
         self._document.find(".//{{{0}}}{1}".format(
-            Settings.NAMESPACE, registry))
+            cls.NAMESPACE, registry))

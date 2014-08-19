@@ -80,13 +80,6 @@ def create_application(
     return wsgi_app
 
 
-def create_service(service_name, api_list):
-
-    bases = (ServiceBase,)
-    api_dict = dict(api_list)
-    return type(str(service_name), bases, api_dict)
-
-
 def get_cache(backend):
     from django.core.cache import (
         get_cache as django_get_cache, InvalidCacheBackendError)
@@ -95,3 +88,21 @@ def get_cache(backend):
     except InvalidCacheBackendError:
         cache = django_get_cache('default')
     return cache
+
+
+def cached_to(attr):
+    def decorator(fn):
+        def wrapper(self, *args, **kwargs):
+            retval = getattr(self, attr, None)
+            if retval is None:
+                retval = fn(self, *args, **kwargs)
+                _lock = RLock()
+                try:
+                    _lock.acquire()
+                    setattr(self, attr, retval)
+                finally:
+                    _lock.release()
+
+            return retval
+        return wrapper
+    return decorator
