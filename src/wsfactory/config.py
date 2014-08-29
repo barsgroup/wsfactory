@@ -257,9 +257,3 @@ class Settings(object):
     def hash(cls):
         self = cls()
         return self._hash
-
-    @classmethod
-    def get_element_root(cls, registry):
-        self = cls()
-        self._document.find(".//{{{0}}}{1}".format(
-            cls.NAMESPACE, registry))
