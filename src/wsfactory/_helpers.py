@@ -11,7 +11,7 @@ from threading import RLock
 from functools import wraps
 from importlib import import_module
 from StringIO import StringIO
-from lxml import etree
+from lxml import etree, objectify
 
 from spyne.service import ServiceBase
 
@@ -45,7 +45,7 @@ def load_xml(xml_path):
         xml_io = open(xml_path, 'rb')
     else:
         raise ValueError(xml_path)
-    xml = etree.parse(xml_io)
+    xml = objectify.parse(xml_io)
     xml_io.close()
     return xml
 
@@ -67,35 +67,17 @@ def load_schema(schema_path):
     return schema
 
 
-def create_application(name, tns, service, in_protocol, out_protocol):
-    from wsfactory.application import WSFactoryApplication, Application
+def create_application(
+        app_cls, wsgi_cls, name, tns, service, in_protocol, out_protocol):
 
-    app = Application(
+    app = app_cls(
         [service], tns,
         name=name,
         in_protocol=in_protocol,
         out_protocol=out_protocol)
-    django_app = WSFactoryApplication(app)
+    wsgi_app = wsgi_cls(app)
 
-    return django_app
-
-
-def create_service(service_name, api_list):
-
-    bases = (ServiceBase,)
-    api_dict = dict(api_list)
-    return type(str(service_name), bases, api_dict)
-
-
-def create_protocol(protocol, security=None, **params):
-    from wsfactory.smev import Soap11WSSE
-
-    if not issubclass(protocol, Soap11WSSE) and security:
-        raise ValueError(
-            "Security can be applied only to Soap11WSSE subclasses")
-    if security:
-        params['wsse_security'] = security
-    return protocol(**params)
+    return wsgi_app
 
 
 def get_cache(backend):
@@ -106,3 +88,21 @@ def get_cache(backend):
     except InvalidCacheBackendError:
         cache = django_get_cache('default')
     return cache
+
+
+def cached_to(attr):
+    def decorator(fn):
+        def wrapper(self, *args, **kwargs):
+            retval = getattr(self, attr, None)
+            if retval is None:
+                retval = fn(self, *args, **kwargs)
+                _lock = RLock()
+                try:
+                    _lock.acquire()
+                    setattr(self, attr, retval)
+                finally:
+                    _lock.release()
+
+            return retval
+        return wrapper
+    return decorator
