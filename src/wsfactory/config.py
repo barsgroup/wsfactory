@@ -18,8 +18,11 @@ import _helpers
 
 
 VALUE_TYPES = {
-    "unicode": unicode,
+    "string": unicode,
     "int": int,
+    "float": float,
+    "text": unicode,
+    "password": unicode,
     "bool": lambda x: x in ("True", "true", True)
 }
 
@@ -63,8 +66,7 @@ class Settings(object):
     @classmethod
     def reload(cls):
         if not cls.configured():
-            raise ImproperlyConfigured(
-                "Not configured yet!")
+            raise ImproperlyConfigured("Not configured yet!")
         config_path = cls.config_path()
         cls.__instance = None
         cls.load(config_path)
@@ -114,7 +116,7 @@ class Settings(object):
         self = cls()
         cls.validate(self._document)
 
-        logger.debug("Dump configutation file %s" % config_path)
+        logger.debug("Dump configuration file %s" % config_path)
         if not os.access(os.path.exists(
             config_path) and config_path or os.path.dirname(
                 config_path), os.W_OK):

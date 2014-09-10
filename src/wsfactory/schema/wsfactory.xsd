@@ -124,7 +124,7 @@
   <!--  Types-->
   <xs:complexType name="ProtocolType">
     <xs:sequence>
-      <xs:element name="Param" type="ParamType"
+      <xs:element name="Param" type="ParamDeclarationType"
                   minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="code" type="xs:token" use="required"/>
@@ -152,6 +152,10 @@
   </xs:complexType>
 
   <xs:complexType name="SecurityModuleType">
+    <xs:sequence>
+      <xs:element name="Param" type="ParamDeclarationType"
+                  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
     <xs:attribute name="path" type="xs:string" use="required"/>
     <xs:attribute name="code" type="xs:token" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
@@ -188,12 +192,23 @@
     </xs:simpleContent>
   </xs:complexType>
 
+  <xs:complexType name="ParamDeclarationType">
+    <xs:simpleContent>
+      <xs:extension base="ParamType">
+        <xs:attribute name="name" type="xs:string" use="optional"/>
+        <xs:attribute name="required" type="xs:boolean" use="optional" default="false"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:simpleType name="ValueType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="unicode"/>
+      <xs:enumeration value="string"/>
       <xs:enumeration value="int"/>
+      <xs:enumeration value="float"/>
       <xs:enumeration value="bool"/>
-      <xs:enumeration value="str"/>
+      <xs:enumeration value="password"/>
+      <xs:enumeration value="text"/>
     </xs:restriction>
   </xs:simpleType>
 

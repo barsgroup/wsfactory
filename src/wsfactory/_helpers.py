@@ -22,8 +22,10 @@ def load(path):
     return getattr(mod, obj)
 
 
+_lock = RLock()
+
+
 def lock(fn):
-    _lock = RLock()
 
     @wraps(fn)
     def wrapper(*args, **kwargs):
