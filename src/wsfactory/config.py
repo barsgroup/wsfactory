@@ -27,11 +27,12 @@ VALUE_TYPES = {
 }
 
 
-def parse_params(params):
+def parse_params(params, filter_nullable=False):
     return dict((
         param.attrib["key"],
         VALUE_TYPES.get(param.attrib["valueType"])(param.text)
-    ) for param in params)
+        if param.text else None
+    ) for param in params if filter_nullable and param.text)
 
 
 class ImproperlyConfigured(Exception):
@@ -171,10 +172,10 @@ class Settings(object):
     def _create_app_protocols(self, app_el):
         in_proto_params = dict(app_el.InProtocol.items())
         in_proto_params["params"] = parse_params(
-            app_el.InProtocol.getchildren())
+            app_el.InProtocol.getchildren(), True)
         out_proto_params = dict(app_el.OutProtocol.items())
         out_proto_params["params"] = parse_params(
-            app_el.OutProtocol.getchildren())
+            app_el.OutProtocol.getchildren(), True)
 
         return (
             self._create_protocol(**in_proto_params),
