@@ -31,7 +31,7 @@ import os
 extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
-    'sphinx.ext.viewcode',
+    # 'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -244,9 +244,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'wsfactory', u'wsfactory Documentation',
-   u'Timur Salyakhutdinov', 'wsfactory', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'wsfactory', u'wsfactory Documentation',
+     u'Timur Salyakhutdinov', 'wsfactory', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

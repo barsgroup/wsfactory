@@ -12,3 +12,4 @@ Contents:
    install
    spyne
    config
+
