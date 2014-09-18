@@ -19,19 +19,22 @@
     <Api code="Code" module="some.module.ApiFunction" name="Do some action"/>
   </ApiRegistry>
   <Services>
-    <!-- Сервисы, они же услуги - наботы методов-API -->
+    <!-- Сервисы, они же услуги - наборы методов-API -->
     <Service code="Service" name="Sample service">
       <Api code="Code"/>
     </Service>
   </Services>
   <SecurityProfile>
+    <!-- Профили безопасности WS-Security. Требует установки модуля spyne-smev -->
     <Modules>
+      <!-- Описание модулей -->
       <Module code="x509token" path="spyne_smev.wsse.protocols.X509TokenProfile" name="X509 Token Profile"/>
     </Modules>
     <Security module="x509token" code="security" name="Default security profile">
-      <Param key="certificate" valueType="unicode">path_to_certificate_file</Param>
-      <Param key="private_key" valueType="unicode">path_to_pkey_file</Param>
-      <Param key="private_key_pass" valueType="unicode">pkey_password</Param>
+      <!-- Декларация объектов профилей безопасности -->
+      <Param key="certificate" valueType="string">path_to_certificate_file</Param>
+      <Param key="private_key" valueType="string">path_to_pkey_file</Param>
+      <Param key="private_key_pass" valueType="string">pkey_password</Param>
     </Security>
   </SecurityProfile>
   <Applications>
