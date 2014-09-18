@@ -18,5 +18,5 @@ setup(
     description=read_file("DESCRIPTION"),
     author='Timur Salyakhutdinov',
     author_email='t.salyakhutdinov@gmail.com',
-    install_requires=['lxml', 'spyne'],
+    install_requires=read_file("REQUIREMENTS"),
 )
