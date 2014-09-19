@@ -1,12 +1,13 @@
 Configuration file
 ==================
 
-
+#TODO
 
 
 ApiRegistry
 -----------
 
+#TODO
 
 Protocols
 ---------
@@ -62,10 +63,15 @@ wsfactory позволяет задать параметры для проток
 Services
 --------
 
+#TODO
 
 WS Security
 -----------
 
+#TODO
+
 Applications
 ------------
+
+#TODO
 
