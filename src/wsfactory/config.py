@@ -32,7 +32,7 @@ def parse_params(params, filter_nullable=False):
         param.attrib["key"],
         VALUE_TYPES.get(param.attrib["valueType"])(param.text)
         if param.text else None
-    ) for param in params if filter_nullable and param.text)
+    ) for param in params if param.text or not filter_nullable)
 
 
 class ImproperlyConfigured(Exception):
@@ -137,7 +137,8 @@ class Settings(object):
         if security:
             security_el = self._document.SecurityProfile.find(
                 '*[@code="{0}"]'.format(security))
-            security_params = parse_params(security_el.getchildren())
+            security_params = parse_params(
+                security_el.findall(".//{{{0}}}Param".format(self.NAMESPACE)))
             security_cls = _helpers.load(
                 self._document.SecurityProfile.Modules.xpath(
                     '*[@code="{0}"]/@path'.format(
