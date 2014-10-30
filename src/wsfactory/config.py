@@ -18,7 +18,8 @@ import _helpers
 
 
 VALUE_TYPES = {
-    "string": unicode,
+    "unicode": unicode,
+    "string": str,
     "int": int,
     "float": float,
     "text": unicode,

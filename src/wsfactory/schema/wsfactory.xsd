@@ -203,6 +203,7 @@
 
   <xs:simpleType name="ValueType">
     <xs:restriction base="xs:string">
+      <xs:enumeration value="unicode"/>
       <xs:enumeration value="string"/>
       <xs:enumeration value="int"/>
       <xs:enumeration value="float"/>
