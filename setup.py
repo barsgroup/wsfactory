@@ -8,7 +8,7 @@ def read_file(name):
 
 setup(
     name='wsfactory',
-    version='0.1.2',
+    version='0.1.3',
     packages=['wsfactory', 'wsfactory.management',
               'wsfactory.management.commands'],
     package_dir={'': 'src'},
