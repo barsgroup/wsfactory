@@ -14,5 +14,5 @@ urlpatterns = patterns(
     'wsfactory.views',
     url(r'^wsfactory/api$', 'api_list'),
     url(r'^wsfactory/api/(?P<service>[\w\-]+)(/\w*)?$', 'handle_api_call'),
-    *get_url_patterns(),
+    *get_url_patterns()
 )
