@@ -181,6 +181,7 @@
     <xs:attribute name="service" type="xs:token" use="required"/>
     <xs:attribute name="name" type="xs:token" use="required"/>
     <xs:attribute name="tns" type="xs:string" use="optional"/>
+    <xs:attribute name="url" type="xs:string" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="ParamType">

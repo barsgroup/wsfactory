@@ -10,6 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import hashlib
+from functools import partial, wraps
 import os
 
 from lxml import etree
@@ -240,7 +241,7 @@ class Settings(object):
     @classmethod
     def get_service_handler(cls, service_name):
         self = cls()
-        if not service_name in self._document.Applications.xpath("*/@name"):
+        if service_name not in self._document.Applications.xpath("*/@name"):
             return None
         if service_name in self._app_cache:
             return self._app_cache.get(service_name)
@@ -262,3 +263,45 @@ class Settings(object):
     def hash(cls):
         self = cls()
         return self._hash
+
+
+def track_config(fn):
+
+    from django.conf import settings
+
+    @wraps(fn)
+    def inner(*args, **kwargs):
+        if not Settings.configured():
+            config_path = getattr(settings, "WSFACTORY_CONFIG_FILE")
+            logger.info(
+                "Not configured yet. Load configuration %s" % config_path)
+            Settings.load(config_path)
+        cache = _helpers.get_cache("wsfactory")
+        if getattr(
+            settings, "WSFACTORY_DEBUG", None
+        ) and Settings.hash() != cache.get(Settings.CACHE_KEY):
+            logger.info("Configuration file was changed. Reloading ...")
+            Settings.reload()
+
+        return fn(*args, **kwargs)
+
+    return inner
+
+
+@track_config
+def get_url_patterns():
+
+    if not Settings.configured():
+        raise ImproperlyConfigured("WSFactory not configured yet!")
+
+    from django.conf.urls import url
+
+    urls = []
+    self = Settings()
+    with_url = self._document.Applications.findall("*[@url]")
+
+    for app in with_url:
+        view = partial(self.ApiHandler, service=app.attrib["name"])
+        urls.append(url(app.attrib["url"], view))
+
+    return urls

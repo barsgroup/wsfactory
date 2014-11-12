@@ -39,7 +39,7 @@
   </SecurityProfile>
   <Applications>
     <!-- Реестр веб-сервисов (Соответствия протоколов-сервисов) -->
-    <Application name="SampleApp" service="Service">
+    <Application name="SampleApp" service="Service" url="^sample/service$">
       <InProtocol code="soap11"/>
       <OutProtocol code="soap11"/>
     </Application>
