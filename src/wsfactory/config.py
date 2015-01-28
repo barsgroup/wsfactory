@@ -156,10 +156,12 @@ class Settings(object):
         service_el = self._document.Services.find(
             '*[@code="{0}"]'.format(service_name))
         api = dict(
-            (api_code, _helpers.load(
-                self._document.ApiRegistry.xpath(
-                    '*[@code="{0}"]/@module'.format(api_code))[0]))
-            for api_code in service_el.xpath("*/@code"))
+            (self._document.ApiRegistry.xpath(
+                '*[@id="{0}"]/@code'.format(api_code))[0],
+             _helpers.load(
+                 self._document.ApiRegistry.xpath(
+                     '*[@id="{0}"]/@module'.format(api_code))[0]))
+            for api_code in service_el.xpath("*/@id"))
         service = type(str(service_name), (self.ServiceBase,), dict(api))
 
         in_protocol, out_protocol = self._create_app_protocols(app_el)

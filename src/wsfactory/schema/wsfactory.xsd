@@ -85,11 +85,11 @@
 
     <xs:key name="ApiKey">
       <xs:selector xpath="wsf:ApiRegistry/wsf:Api"/>
-      <xs:field xpath="@code"/>
+      <xs:field xpath="@id"/>
     </xs:key>
     <xs:keyref name="ApiKeyRef" refer="ApiKey">
       <xs:selector xpath="wsf:Services/wsf:Service/wsf:Api"/>
-      <xs:field xpath="@code"/>
+      <xs:field xpath="@id"/>
     </xs:keyref>
 
     <xs:key name="ServiceKey">
@@ -137,13 +137,14 @@
     <xs:attribute name="code" type="xs:token" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="module" type="xs:string" use="required"/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="ServiceType">
     <xs:sequence>
       <xs:element name="Api" minOccurs="1" maxOccurs="unbounded">
         <xs:complexType>
-          <xs:attribute name="code" type="xs:string" use="required"/>
+          <xs:attribute name="id" type="xs:string" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>

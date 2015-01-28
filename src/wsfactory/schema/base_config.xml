@@ -16,12 +16,12 @@
   </Protocols>
   <ApiRegistry>
     <!-- API-методы -->
-    <Api code="Code" module="some.module.ApiFunction" name="Do some action"/>
+    <Api code="Code" id="Id" module="some.module.ApiFunction" name="Do some action"/>
   </ApiRegistry>
   <Services>
     <!-- Сервисы, они же услуги - наборы методов-API -->
     <Service code="Service" name="Sample service">
-      <Api code="Code"/>
+      <Api id="Id"/>
     </Service>
   </Services>
   <SecurityProfile>
