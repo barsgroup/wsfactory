@@ -279,9 +279,7 @@ def track_config(fn):
                 "Not configured yet. Load configuration %s" % config_path)
             Settings.load(config_path)
         cache = _helpers.get_cache("wsfactory")
-        if getattr(
-            settings, "WSFACTORY_DEBUG", None
-        ) and Settings.hash() != cache.get(Settings.CACHE_KEY):
+        if Settings.hash() != cache.get(Settings.CACHE_KEY):
             logger.info("Configuration file was changed. Reloading ...")
             Settings.reload()
 
