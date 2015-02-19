@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from distutils.core import setup
 
@@ -8,7 +9,7 @@ def read_file(name):
 
 setup(
     name='wsfactory',
-    version='0.1.5',
+    version='0.2.1',
     packages=['wsfactory', 'wsfactory.management',
               'wsfactory.management.commands'],
     package_dir={'': 'src'},
