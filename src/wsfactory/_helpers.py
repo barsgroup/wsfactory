@@ -84,11 +84,11 @@ def create_application(
 
 def get_cache(backend):
     from django.core.cache import (
-        get_cache as django_get_cache, InvalidCacheBackendError)
+        caches, InvalidCacheBackendError)
     try:
-        cache = django_get_cache(backend)
+        cache = caches[backend]
     except InvalidCacheBackendError:
-        cache = django_get_cache('default')
+        cache = caches['default']
     return cache
 
 
