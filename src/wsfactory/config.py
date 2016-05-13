@@ -156,12 +156,23 @@ class Settings(object):
         service_el = self._document.Services.find(
             '*[@code="{0}"]'.format(service_name))
         api = {}
+        service_meta = {}
         for api_id in service_el.xpath("*/@id"):
             method_ = self._document.ApiRegistry.xpath(
                 '*[@id="{0}"]'.format(api_id)
             )[0]
             api.update({
                 method_.get("code"): _helpers.load(method_.get("module"))})
+
+            service_meta.update({
+                method_.get('code'): {
+                    'method_verbose_name': method_.get('name'),
+                    'protocol': app_el.InProtocol.get('code'),
+                },
+            })
+
+        api.update({'METHOD_VERBOSE_NAMES': service_meta})
+
         service = type(str(service_name), (self.ServiceBase,), dict(api))
 
         in_protocol, out_protocol = self._create_app_protocols(app_el)
