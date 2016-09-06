@@ -58,3 +58,6 @@ target/
 
 *.pyc
 /dist/
+
+# m3-builder
+version.conf
