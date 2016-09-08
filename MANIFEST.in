@@ -1,4 +1,4 @@
-include README README.rst LICENSE DESCRIPTION REQUIREMENTS
+include README README.rst LICENSE DESCRIPTION REQUIREMENTS version.conf
 recursive-include src *
 recursive-exclude src *.pyc
 recursive-exclude src *.orig

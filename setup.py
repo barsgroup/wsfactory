@@ -1,23 +1,46 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 import os
-from distutils.core import setup
+
+from pip.download import PipSession
+from pip.req.req_file import parse_requirements
+from setuptools import setup, find_packages
 
 
-def read_file(name):
-    with open(os.path.join(os.path.dirname(__file__), name)) as fd:
-        return fd.read()
+def _get_requirements(file_name):
+    pip_session = PipSession()
+    requirements = parse_requirements(file_name, session=pip_session)
+
+    return tuple(str(requirement.req) for requirement in requirements)
+
+
+def _read(fname):
+    try:
+        return open(os.path.join(os.path.dirname(__file__),
+            fname)).read()
+    except IOError:
+        return ''
+
 
 setup(
     name='wsfactory',
-    version='0.2.2',
-    packages=['wsfactory', 'wsfactory.management',
-              'wsfactory.management.commands'],
+    url='http://bitbucket.org/barsgroup/wsfactory',
+    license=_read("LICENSE"),
+    packages=(
+        'wsfactory',
+        'wsfactory.management',
+        'wsfactory.management.commands',
+    ),
     package_dir={'': 'src'},
     package_data={'': ['schema/*']},
-    url='http://bitbucket.org/barsgroup/wsfactory',
-    license=read_file("LICENSE"),
-    description=read_file("DESCRIPTION"),
+    description=_read('DESCRIPTION'),
     author='Timur Salyakhutdinov',
     author_email='t.salyakhutdinov@gmail.com',
-    install_requires=read_file("REQUIREMENTS"),
+    install_requires=_get_requirements('REQUIREMENTS'),
+    dependency_links=(
+        'http://pypi.bars-open.ru/simple/m3-builder',
+    ),
+    setup_requires=(
+        'm3-builder>=1.0.1',
+    ),
+    set_build_info=os.path.dirname(__file__),
 )
