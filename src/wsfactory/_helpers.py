@@ -70,14 +70,18 @@ def load_schema(schema_path):
 
 
 def create_application(
-        app_cls, wsgi_cls, name, tns, service, in_protocol, out_protocol):
+        app_cls, wsgi_cls, name, tns, service,
+        in_protocol, out_protocol, max_content_length):
 
     app = app_cls(
         [service], tns,
         name=name,
         in_protocol=in_protocol,
         out_protocol=out_protocol)
-    wsgi_app = wsgi_cls(app)
+    if max_content_length is not None:
+        wsgi_app = wsgi_cls(app, max_content_length=max_content_length)
+    else:
+        wsgi_app = wsgi_cls(app)
 
     return wsgi_app
 
