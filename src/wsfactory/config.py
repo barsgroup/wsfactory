@@ -181,7 +181,9 @@ class Settings(object):
             self.Application,
             self.WsgiApplication,
             app_name, app_el.get("tns", self.DEFAULT_TNS),
-            service, in_protocol, out_protocol)
+            service, in_protocol, out_protocol,
+            app_el.get("max_content_length", None)
+        )
         self._app_cache[app_name] = app
         return app
 
