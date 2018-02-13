@@ -1,21 +1,18 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import absolute_import
 
-"""
-config.py
-
-:Created: 5/12/14
-:Author: timic
-"""
-import logging
-logger = logging.getLogger(__name__)
-
+from functools import partial
+from functools import wraps
 import hashlib
-from functools import partial, wraps
+import logging
 import os
 
 from lxml import etree
 
-import _helpers
+from . import _helpers
+
+
+logger = logging.getLogger(__name__)
 
 
 VALUE_TYPES = {

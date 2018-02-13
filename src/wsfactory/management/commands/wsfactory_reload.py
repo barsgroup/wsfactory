@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import absolute_import
 
-"""
-wsfactory_reload.py
-
-:Created: 5/15/14
-:Author: timic
-"""
-
-from django.core.management import BaseCommand
 from django.conf import settings
+from django.core.management import BaseCommand
 
 from wsfactory.config import Settings
 
