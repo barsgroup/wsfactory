@@ -8,6 +8,7 @@ import logging
 import os
 
 from lxml import etree
+import six
 
 from . import _helpers
 
@@ -16,12 +17,12 @@ logger = logging.getLogger(__name__)
 
 
 VALUE_TYPES = {
-    "unicode": unicode,
+    "unicode": six.text_type,
     "string": str,
     "int": int,
     "float": float,
-    "text": unicode,
-    "password": unicode,
+    "text": six.text_type,
+    "password": six.text_type,
     "bool": lambda x: x in ("True", "true", True)
 }
 
@@ -185,10 +186,10 @@ class Settings(object):
         return app
 
     def _create_app_protocols(self, app_el):
-        in_proto_params = dict(app_el.InProtocol.items())
+        in_proto_params = dict(list(app_el.InProtocol.items()))
         in_proto_params["params"] = parse_params(
             app_el.InProtocol.getchildren(), True)
-        out_proto_params = dict(app_el.OutProtocol.items())
+        out_proto_params = dict(list(app_el.OutProtocol.items()))
         out_proto_params["params"] = parse_params(
             app_el.OutProtocol.getchildren(), True)
 

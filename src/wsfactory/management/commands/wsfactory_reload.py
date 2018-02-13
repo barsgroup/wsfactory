@@ -1,5 +1,6 @@
 # coding: utf-8
 from __future__ import absolute_import
+from __future__ import print_function
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -13,8 +14,8 @@ class Command(BaseCommand):
 
         path = getattr(settings, "WSFACTORY_CONFIG_FILE", None)
         if not path:
-            print "Config file path does not provided"
+            print("Config file path does not provided")
         else:
-            print "Reloading configuration file %s ..." % path
+            print("Reloading configuration file %s ..." % path)
             Settings.load(path)
-            print "OK!"
+            print("OK!")

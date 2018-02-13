@@ -3,12 +3,12 @@ from __future__ import absolute_import
 
 from functools import wraps
 from importlib import import_module
-from StringIO import StringIO
 from threading import RLock
 import os
 
 from lxml import etree
 from lxml import objectify
+from six.moves import cStringIO as StringIO
 import requests
 
 

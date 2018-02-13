@@ -108,7 +108,7 @@ def pylint():
             'pylint --py3k "{}"'
             .format(join(SRC_DIR, PROJECT_PACKAGE))
         ).return_code != 0:
-            abort('Python 3 incompartible')
+            abort('Python 3 incompatible')
 
         print(green(u'PyLint', bold=True))
         if local(
