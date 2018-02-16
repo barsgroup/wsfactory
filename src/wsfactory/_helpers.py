@@ -1,19 +1,15 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import absolute_import
 
-"""
-factory.py
-
-:Created: 3/13/14
-:Author: timic
-"""
-import os
-from threading import RLock
 from functools import wraps
 from importlib import import_module
-from StringIO import StringIO
-from lxml import etree, objectify
+from threading import RLock
+import os
 
-from spyne.service import ServiceBase
+from lxml import etree
+from lxml import objectify
+from six.moves import cStringIO as StringIO
+import requests
 
 
 def load(path):
@@ -57,7 +53,6 @@ def load_schema(schema_path):
     Загружает схему xsd
     """
     if schema_path.startswith('http://') or schema_path.startswith('https://'):
-        import requests
         response = requests.get(schema_path)
         schema_io = StringIO(response.text)
     elif os.path.exists(schema_path):
@@ -87,8 +82,8 @@ def create_application(
 
 
 def get_cache(backend):
-    from django.core.cache import (
-        caches, InvalidCacheBackendError)
+    from django.core.cache import caches
+    from django.core.cache import InvalidCacheBackendError
     try:
         cache = caches[backend]
     except InvalidCacheBackendError:

@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import absolute_import
+from __future__ import print_function
 
-"""
-wsfactory_reload.py
-
-:Created: 5/15/14
-:Author: timic
-"""
-
-from django.core.management import BaseCommand
 from django.conf import settings
+from django.core.management import BaseCommand
 
 from wsfactory.config import Settings
 
@@ -19,8 +14,8 @@ class Command(BaseCommand):
 
         path = getattr(settings, "WSFACTORY_CONFIG_FILE", None)
         if not path:
-            print "Config file path does not provided"
+            print("Config file path does not provided")
         else:
-            print "Reloading configuration file %s ..." % path
+            print("Reloading configuration file %s ..." % path)
             Settings.load(path)
-            print "OK!"
+            print("OK!")

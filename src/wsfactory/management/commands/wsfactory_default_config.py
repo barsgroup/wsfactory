@@ -1,21 +1,14 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import absolute_import
 
-"""
-wsfactory_default_config.py
-
-:Created: 5/15/14
-:Author: timic
-"""
-
-import os
 import codecs
-
-from lxml import etree
+import os
 
 from django.core.management import BaseCommand
+from lxml import etree
 
-import wsfactory
 from wsfactory.config import Settings
+import wsfactory
 
 
 class Command(BaseCommand):
@@ -41,5 +34,3 @@ class Command(BaseCommand):
             fd.write(etree.tounicode(el, pretty_print=True))
 
         self.stdout.write("OK!\n")
-
-
