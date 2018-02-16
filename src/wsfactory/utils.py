@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import absolute_import
 
-"""
-helpers.py
-
-:Created: 4/4/14
-:Author: timic
-"""
-
-
-from spyne.model.complex import ComplexModelMeta, ComplexModelBase
+from spyne.model.complex import ComplexModelBase
+from spyne.model.complex import ComplexModelMeta
 
 
 def namespace(ns):

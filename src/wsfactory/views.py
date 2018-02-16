@@ -1,19 +1,16 @@
-# -*- coding: utf-8 -*-
-
-"""
-views.py
-
-:Created: 3/19/14
-:Author: timic
-"""
+# coding: utf-8
+from __future__ import absolute_import
 
 import logging
-logger = logging.getLogger(__name__)
 
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 
-from config import Settings, track_config
+from .config import Settings
+from .config import track_config
+
+
+logger = logging.getLogger(__name__)
 
 
 @track_config
