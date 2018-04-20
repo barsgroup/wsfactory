@@ -175,12 +175,15 @@ class Settings(object):
 
         in_protocol, out_protocol = self._create_app_protocols(app_el)
 
+        max_content_length = app_el.get("max_content_length", None)
+        if max_content_length:
+            max_content_length = int(max_content_length)
         app = _helpers.create_application(
             self.Application,
             self.WsgiApplication,
             app_name, app_el.get("tns", self.DEFAULT_TNS),
             service, in_protocol, out_protocol,
-            app_el.get("max_content_length", None)
+            max_content_length
         )
         self._app_cache[app_name] = app
         return app
