@@ -5,6 +5,7 @@ global-exclude __pycache__
 
 include LICENSE
 include DESCRIPTION
+include REQUIREMENTS
 include version.conf
 include requirements/_base.txt
 include requirements/prod.txt
