@@ -1,17 +1,33 @@
 # coding: utf-8
 from os.path import join
 from os.path import dirname
+from os.path import abspath
+import re
 
-from pip.download import PipSession
-from pip.req.req_file import parse_requirements
-from setuptools import setup, find_packages
+from pkg_resources import Requirement
+from setuptools import find_packages
+from setuptools import setup
 
 
-def _get_requirements(file_name):
-    pip_session = PipSession()
-    requirements = parse_requirements(file_name, session=pip_session)
+_COMMENT_RE = re.compile(r'(^|\s)+#.*$')
 
-    return tuple(str(requirement.req) for requirement in requirements)
+
+def _get_requirements(file_path):
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = _COMMENT_RE.sub('', line)
+            line = line.strip()
+            if line.startswith('-r '):
+                for req in  _get_requirements(
+                    join(dirname(abspath(file_path)), line[3:])
+                ):
+                    yield req
+            elif line:
+                req = Requirement(line)
+                req_str = req.name + str(req.specifier)
+                if req.marker:
+                    req_str += '; ' + str(req.marker)
+                yield req_str
 
 
 def _read(fname):
@@ -42,15 +58,15 @@ setup(
         'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
     ),
-    description=_read('DESCRIPTION'),
+    description=_read('README.rst'),
     author='Timur Salyakhutdinov',
     author_email='t.salyakhutdinov@gmail.com',
-    install_requires=_get_requirements('REQUIREMENTS'),
+    install_requires=tuple(_get_requirements('REQUIREMENTS')),
     dependency_links=(
         'http://pypi.bars-open.ru/simple/m3-builder',
     ),
     setup_requires=(
-        'm3-builder>=1.1',
+        'm3-builder>=1.2,<2',
     ),
     set_build_info=dirname(__file__),
 )
