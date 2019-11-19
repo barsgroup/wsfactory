@@ -31,7 +31,7 @@ def _get_requirements(file_path):
 
 
 def _read(fname):
-    return open(join(dirname(__file__), fname)).read()
+    return open(join(dirname(__file__), fname), encoding='utf-8').read()
 
 
 setup(
